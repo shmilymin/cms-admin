@@ -31,7 +31,7 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuDao, SysMenuEntity> i
     @Override
     public List<SysMenuEntity> queryListParentId(Long parentId, List<Long> menuIdList) {
         List<SysMenuEntity> menuList = list(Wrappers.<SysMenuEntity>lambdaQuery()
-                .eq(SysMenuEntity::getPid, parentId));
+                .eq(SysMenuEntity::getPid, parentId).orderByDesc(SysMenuEntity::getOrderNum));
         if (menuIdList == null) {
             return menuList;
         }
