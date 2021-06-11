@@ -25,6 +25,13 @@
     <div class="layui-header">
         <div class="layui-logo">后台管理系统</div>
         <!-- 头部区域 -->
+        <ul class="layui-nav layui-layout-left">
+            <li class="layui-nav-item" lay-unselect>
+                <a href="javascript:;" onclick="javascript:refreshFrame()" title="刷新">
+                    <i class="layui-icon layui-icon-refresh-3"></i>
+                </a>
+            </li>
+        </ul>
         <ul class="layui-nav layui-layout-right">
             <li class="layui-nav-item">
                 <a href="javascript:;" onclick="updatePassword();"><i class="fa fa-lock"></i> &nbsp;修改密码</a>
@@ -87,6 +94,12 @@
     </div>
 </div>
 <script th:inline="none">
+
+    function refreshFrame(){
+        var iframe_el = $('.layui-show iframe')
+        iframe_el.attr('src', iframe_el.attr('src'));
+    }
+
     let menuHtml = '';
     $(function () {
         $(window).on('resize', function () {
