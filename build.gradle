@@ -1,6 +1,9 @@
 buildscript {
     repositories {
-        maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
+        maven {
+            allowInsecureProtocol = true
+            url "http://maven.aliyun.com/nexus/content/groups/public/"
+        }
     }
     dependencies {
         classpath 'org.springframework.boot:spring-boot-gradle-plugin:2.2.13.RELEASE'
@@ -21,7 +24,10 @@ bootJar {
 }
 
 repositories {
-    maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
+    maven {
+        allowInsecureProtocol = true
+        url "http://maven.aliyun.com/nexus/content/groups/public/"
+    }
 }
 
 dependencies {
