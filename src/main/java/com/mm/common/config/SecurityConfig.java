@@ -1,9 +1,9 @@
 package com.mm.common.config;
 
-import com.baomidou.mybatisplus.extension.api.R;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import cn.hutool.json.JSONUtil;
 import com.mm.common.filter.VerifyCodeFilter;
 import com.mm.common.handler.AuthFailureHandler;
+import com.mm.common.util.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -37,7 +37,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .successHandler((request, response, authentication) -> {
                     response.setContentType("application/json;charset=utf-8");
                     try (PrintWriter writer = response.getWriter()) {
-                        writer.write(new ObjectMapper().writeValueAsString(R.ok(null)));
+                        writer.write(JSONUtil.toJsonStr(R.ok()));
                     }
                 })
                 .failureHandler(authFailureHandler)

@@ -1,6 +1,6 @@
 package com.mm.modules.sys.controller;
 
-import com.mm.common.utils.PageUtil;
+import com.mm.common.util.PageUtil;
 import com.mm.modules.sys.service.SysLogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;

@@ -1,4 +1,4 @@
-package com.mm.common.utils;
+package com.mm.common.util;
 
 /**
  * 常量

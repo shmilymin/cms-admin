@@ -1,18 +1,17 @@
 package com.mm.common.aspect;
 
+import cn.hutool.extra.servlet.ServletUtil;
 import cn.hutool.json.JSONUtil;
 import com.mm.common.annotation.SysLog;
-import com.mm.common.utils.HttpContextUtil;
-import com.mm.common.utils.IPUtil;
-import com.mm.common.utils.SecurityUtil;
+import com.mm.common.util.SecurityUtil;
 import com.mm.modules.sys.entity.SysLogEntity;
 import com.mm.modules.sys.service.SysLogService;
+import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,10 +24,11 @@ import java.lang.reflect.Method;
  */
 @Aspect
 @Component
+@RequiredArgsConstructor
 public class SysLogAspect {
 
-    @Autowired
-    private SysLogService sysLogService;
+    final SysLogService sysLogService;
+    final HttpServletRequest request;
 
     @Pointcut("@annotation(com.mm.common.annotation.SysLog)")
     public void logPointCut() {
@@ -75,10 +75,8 @@ public class SysLogAspect {
 
         }
 
-        //获取request
-        HttpServletRequest request = HttpContextUtil.getHttpServletRequest();
         //设置IP地址
-        sysLog.setIp(IPUtil.getIpAddr(request));
+        sysLog.setIp(ServletUtil.getClientIP(request));
 
         //用户名
         sysLog.setUsername(SecurityUtil.getUsername());

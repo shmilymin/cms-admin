@@ -1,18 +1,8 @@
-buildscript {
-    repositories {
-        maven {
-            allowInsecureProtocol = true
-            url "http://maven.aliyun.com/nexus/content/groups/public/"
-        }
-    }
-    dependencies {
-        classpath 'org.springframework.boot:spring-boot-gradle-plugin:2.2.13.RELEASE'
-    }
+plugins {
+    id 'org.springframework.boot' version '2.4.13'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
 }
-
-apply plugin: 'java'
-apply plugin: 'org.springframework.boot'
-apply plugin: 'io.spring.dependency-management'
 
 group 'com.mm'
 version '1.0-SNAPSHOT'
@@ -24,14 +14,12 @@ bootJar {
 }
 
 repositories {
-    maven {
-        allowInsecureProtocol = true
-        url "http://maven.aliyun.com/nexus/content/groups/public/"
-    }
+    maven { url "https://maven.aliyun.com/repository/public" }
 }
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-aop'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-quartz'
@@ -40,12 +28,13 @@ dependencies {
     implementation 'org.springframework.session:spring-session-data-redis'
     implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
     implementation 'mysql:mysql-connector-java'
-    implementation 'cn.hutool:hutool-all:5.6.3'
-    implementation 'com.baomidou:mybatis-plus-boot-starter:3.3.2'
+    implementation 'cn.hutool:hutool-all:5.7.22'
+    implementation 'com.baomidou:mybatis-plus-boot-starter:3.5.1'
 
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'com.baomidou:mybatis-plus-generator:3.5.2'
 }
 
 test {

@@ -2,10 +2,10 @@ package com.mm.modules.sys.controller;
 
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.api.R;
-import com.baomidou.mybatisplus.extension.exceptions.ApiException;
 import com.mm.common.annotation.SysLog;
-import com.mm.common.utils.Constant;
+import com.mm.common.exception.GException;
+import com.mm.common.util.Constant;
+import com.mm.common.util.R;
 import com.mm.modules.sys.entity.SysMenuEntity;
 import com.mm.modules.sys.service.SysMenuService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,7 +99,7 @@ public class SysMenuController extends AbstractController {
         //数据校验
         verifyForm(menu);
         sysMenuService.saveOrUpdate(menu);
-        return R.ok(null);
+        return R.ok();
     }
 
     /**
@@ -114,13 +114,13 @@ public class SysMenuController extends AbstractController {
             List<SysMenuEntity> menuList = sysMenuService.list(Wrappers.<SysMenuEntity>lambdaQuery()
                     .eq(SysMenuEntity::getPid, id));
             if (menuList.size() > 0) {
-                return R.failed("请先删除子菜单或按钮");
+                return R.error("请先删除子菜单或按钮");
             }
         }
         for (Long id : ids) {
             sysMenuService.delete(id);
         }
-        return R.ok(null);
+        return R.ok();
     }
 
     /**
@@ -128,17 +128,17 @@ public class SysMenuController extends AbstractController {
      */
     private void verifyForm(SysMenuEntity menu) {
         if (StrUtil.isBlank(menu.getName())) {
-            throw new ApiException("菜单名称不能为空");
+            throw new GException("菜单名称不能为空");
         }
 
         if (menu.getPid() == null) {
-            throw new ApiException("上级菜单不能为空");
+            throw new GException("上级菜单不能为空");
         }
 
         //菜单
         if (menu.getType() == Constant.MenuType.MENU.getValue()) {
             if (StrUtil.isBlank(menu.getUrl())) {
-                throw new ApiException("菜单URL不能为空");
+                throw new GException("菜单URL不能为空");
             }
         }
 
@@ -153,7 +153,7 @@ public class SysMenuController extends AbstractController {
         if (menu.getType() == Constant.MenuType.CATALOG.getValue() ||
                 menu.getType() == Constant.MenuType.MENU.getValue()) {
             if (parentType != Constant.MenuType.CATALOG.getValue()) {
-                throw new ApiException("上级菜单只能为目录类型");
+                throw new GException("上级菜单只能为目录类型");
             }
             return;
         }
@@ -161,7 +161,7 @@ public class SysMenuController extends AbstractController {
         //按钮
         if (menu.getType() == Constant.MenuType.BUTTON.getValue()) {
             if (parentType != Constant.MenuType.MENU.getValue()) {
-                throw new ApiException("上级菜单只能为菜单类型");
+                throw new GException("上级菜单只能为菜单类型");
             }
             return;
         }

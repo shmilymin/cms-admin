@@ -1,8 +1,8 @@
 package com.mm.modules.job.controller;
 
-import com.baomidou.mybatisplus.extension.api.R;
 import com.mm.common.annotation.SysLog;
-import com.mm.common.utils.PageUtil;
+import com.mm.common.util.PageUtil;
+import com.mm.common.util.R;
 import com.mm.modules.job.entity.ScheduleJobEntity;
 import com.mm.modules.job.service.ScheduleJobService;
 import lombok.extern.slf4j.Slf4j;
@@ -47,7 +47,7 @@ public class ScheduleJobController {
     @PreAuthorize("hasAnyAuthority('sys:schedule:save', 'sys:schedule:update')")
     public R saveOrUpdate(@RequestBody ScheduleJobEntity scheduleJob) {
         scheduleJobService.saveOrUpdate(scheduleJob);
-        return R.ok(null);
+        return R.ok();
     }
 
     /**
@@ -59,7 +59,7 @@ public class ScheduleJobController {
     public R delete(@RequestBody Long[] jobIds) {
         log.debug("delete jobIds:{}", Arrays.asList(jobIds));
         scheduleJobService.deleteBatch(jobIds);
-        return R.ok(null);
+        return R.ok();
     }
 
     /**
@@ -71,7 +71,7 @@ public class ScheduleJobController {
     public R run(@RequestBody Long[] jobIds) {
         log.debug("run jobIds:{}", Arrays.asList(jobIds));
         scheduleJobService.run(jobIds);
-        return R.ok(null);
+        return R.ok();
     }
 
     /**
@@ -84,7 +84,7 @@ public class ScheduleJobController {
         log.debug("pause jobIds:{}", Arrays.asList(jobIds));
         scheduleJobService.pause(jobIds);
 
-        return R.ok(null);
+        return R.ok();
     }
 
     /**
@@ -97,7 +97,7 @@ public class ScheduleJobController {
         log.debug("resume jobIds:{}", Arrays.asList(jobIds));
         scheduleJobService.resume(jobIds);
 
-        return R.ok(null);
+        return R.ok();
     }
 
 }

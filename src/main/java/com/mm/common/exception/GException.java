@@ -1,10 +1,16 @@
 package com.mm.common.exception;
 
+import com.mm.common.util.ICode;
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 自定义异常
  *
  * @author lwl
  */
+@Getter
+@Setter
 public class GException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
@@ -14,6 +20,12 @@ public class GException extends RuntimeException {
     public GException(String msg) {
         super(msg);
         this.msg = msg;
+    }
+
+    public GException(ICode iCode) {
+        super(iCode.getMsg());
+        this.code = iCode.getCode();
+        this.msg = iCode.getMsg();
     }
 
     public GException(String msg, Throwable e) {
@@ -32,22 +44,5 @@ public class GException extends RuntimeException {
         this.msg = msg;
         this.code = code;
     }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
-
-    public int getCode() {
-        return code;
-    }
-
-    public void setCode(int code) {
-        this.code = code;
-    }
-
 
 }

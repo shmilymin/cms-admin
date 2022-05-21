@@ -1,13 +1,13 @@
 package com.mm.modules.sys.service.impl;
 
-import cn.hutool.core.util.StrUtil;
+import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.mm.common.utils.Constant;
-import com.mm.common.utils.PageUtil;
-import com.mm.common.utils.Query;
+import com.mm.common.util.Constant;
+import com.mm.common.util.PageUtil;
+import com.mm.common.util.Query;
 import com.mm.modules.sys.dao.SysRoleDao;
 import com.mm.modules.sys.entity.SysRoleEntity;
 import com.mm.modules.sys.entity.SysRoleMenuEntity;
@@ -20,10 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -40,10 +37,9 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleDao, SysRoleEntity> i
 
     @Override
     public PageUtil queryPage(Map<String, Object> params) {
-        String roleName = (String) params.get("roleName");
         LambdaQueryWrapper<SysRoleEntity> qw = new LambdaQueryWrapper<>();
-        qw.like(StrUtil.isNotBlank(roleName), SysRoleEntity::getRoleName, roleName);
-        qw.apply(params.get(Constant.SQL_FILTER) != null, (String) params.get(Constant.SQL_FILTER));
+        qw.like(ObjectUtil.isNotNull(params.get("roleName")), SysRoleEntity::getRoleName, params.get("roleName"));
+        qw.apply(Objects.nonNull(params.get(Constant.SQL_FILTER)), (String) params.get(Constant.SQL_FILTER));
         IPage<SysRoleEntity> page = this.page(new Query<SysRoleEntity>().getPage(params), qw);
         return new PageUtil(page);
     }
@@ -70,7 +66,7 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleDao, SysRoleEntity> i
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean removeByIds(Collection<? extends Serializable> roleIds) {
+    public boolean removeByIdList(Collection<? extends Serializable> roleIds) {
         //删除角色
         super.removeByIds(roleIds);
 

@@ -1,9 +1,9 @@
 package com.mm.modules.sys.controller;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.api.R;
 import com.mm.common.annotation.SysLog;
-import com.mm.common.utils.PageUtil;
+import com.mm.common.util.PageUtil;
+import com.mm.common.util.R;
 import com.mm.modules.sys.entity.SysMenuEntity;
 import com.mm.modules.sys.entity.SysRoleEntity;
 import com.mm.modules.sys.entity.SysRoleMenuEntity;
@@ -105,7 +105,7 @@ public class SysRoleController extends AbstractController {
     @PreAuthorize("hasAnyAuthority('sys:role:save', 'sys:role:update')")
     public R saveOrUpdate(@RequestBody SysRoleEntity role) {
         sysRoleService.saveOrUpdate(role);
-        return R.ok(null);
+        return R.ok();
     }
 
     /**
@@ -115,7 +115,7 @@ public class SysRoleController extends AbstractController {
     @RequestMapping("/delete")
     @PreAuthorize("hasAnyAuthority('sys:role:delete')")
     public R delete(@RequestBody Long[] roleIds) {
-        sysRoleService.removeByIds(Arrays.asList(roleIds));
-        return R.ok(null);
+        sysRoleService.removeByIdList(Arrays.asList(roleIds));
+        return R.ok();
     }
 }

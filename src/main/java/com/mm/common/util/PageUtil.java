@@ -1,4 +1,4 @@
-package com.mm.common.utils;
+package com.mm.common.util;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import lombok.Data;

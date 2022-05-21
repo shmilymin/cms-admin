@@ -1,7 +1,8 @@
 package com.mm.common.handler;
 
-import com.baomidou.mybatisplus.extension.api.R;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import cn.hutool.http.ContentType;
+import cn.hutool.json.JSONUtil;
+import com.mm.common.util.R;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
@@ -22,9 +23,9 @@ public class AuthFailureHandler implements AuthenticationFailureHandler {
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response
             , AuthenticationException e) throws IOException {
-        response.setContentType("application/json;charset=utf-8");
+        response.setContentType(ContentType.JSON.getValue());
         try (PrintWriter writer = response.getWriter()) {
-            writer.write(new ObjectMapper().writeValueAsString(R.failed(e.getMessage())));
+            writer.write(JSONUtil.toJsonStr(R.error(e.getMessage())));
         }
     }
 }

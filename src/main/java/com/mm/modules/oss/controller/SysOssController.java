@@ -1,7 +1,7 @@
 package com.mm.modules.oss.controller;
 
-import com.baomidou.mybatisplus.extension.api.R;
 import com.mm.common.exception.GException;
+import com.mm.common.util.R;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,7 +26,7 @@ public class SysOssController {
             throw new GException("上传文件不能为空");
         }
 
-        return R.ok(null);
+        return R.ok();
     }
 
 

@@ -1,4 +1,4 @@
-package com.mm.common.utils;
+package com.mm.common.util;
 
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;

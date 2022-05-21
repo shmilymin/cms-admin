@@ -1,7 +1,7 @@
 package com.mm.modules.sys.controller;
 
 import com.mm.modules.sys.entity.SysUserEntity;
-import com.mm.common.utils.SecurityUtil;
+import com.mm.common.util.SecurityUtil;
 
 /**
  * Controller公共组件

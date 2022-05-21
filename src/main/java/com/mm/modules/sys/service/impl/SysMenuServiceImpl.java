@@ -2,59 +2,91 @@ package com.mm.modules.sys.service.impl;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.mm.common.utils.Constant;
+import com.mm.common.util.Constant;
 import com.mm.modules.sys.dao.SysMenuDao;
 import com.mm.modules.sys.entity.SysMenuEntity;
 import com.mm.modules.sys.entity.SysRoleMenuEntity;
+import com.mm.modules.sys.entity.SysUserRoleEntity;
 import com.mm.modules.sys.service.SysMenuService;
 import com.mm.modules.sys.service.SysRoleMenuService;
-import com.mm.modules.sys.service.SysUserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.mm.modules.sys.service.SysUserRoleService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 
 @Service("sysMenuService")
+@RequiredArgsConstructor
 public class SysMenuServiceImpl extends ServiceImpl<SysMenuDao, SysMenuEntity> implements SysMenuService {
-    @Autowired
-    private SysUserService sysUserService;
-    @Autowired
-    private SysRoleMenuService sysRoleMenuService;
+    final SysUserRoleService sysUserRoleService;
+    final SysRoleMenuService sysRoleMenuService;
 
     @Override
     public List<String> getPermsByUserId(Long userId) {
         return baseMapper.getPermsByUserId(userId);
     }
 
-    @Override
-    public List<SysMenuEntity> queryListParentId(Long parentId, List<Long> menuIdList) {
-        List<SysMenuEntity> menuList = list(Wrappers.<SysMenuEntity>lambdaQuery()
-                .eq(SysMenuEntity::getPid, parentId).orderByDesc(SysMenuEntity::getOrderNum));
-        if (menuIdList == null) {
-            return menuList;
-        }
-
-        List<SysMenuEntity> userMenuList = new ArrayList<>();
-        for (SysMenuEntity menu : menuList) {
-            if (menuIdList.contains(menu.getId())) {
-                userMenuList.add(menu);
-            }
-        }
-        return userMenuList;
-    }
 
     @Override
     public List<SysMenuEntity> getUserMenuList(Long userId) {
-        //系统管理员，拥有最高权限
+        // 获取全部目录和菜单菜单
+        List<SysMenuEntity> ms = list(Wrappers.<SysMenuEntity>lambdaQuery().in(SysMenuEntity::getType,
+                        Arrays.asList(Constant.MenuType.CATALOG.getValue(), Constant.MenuType.MENU.getValue()))
+                .orderByDesc(SysMenuEntity::getOrderNum));
+        // 获取父菜单
+        List<SysMenuEntity> pms = new ArrayList<>();
         if (userId == Constant.SUPER_ADMIN) {
-            return getAllMenuList(null);
+            // 获取全部父菜单
+            pms = ms.stream().filter(e -> Objects.equals(0L, e.getPid())).collect(Collectors.toList());
+        } else {
+            // 获取用户角色
+            List<SysUserRoleEntity> urs = sysUserRoleService.list(Wrappers.<SysUserRoleEntity>lambdaQuery()
+                    .eq(SysUserRoleEntity::getUserId, userId));
+            if (urs.isEmpty()) {
+                return pms;
+            }
+            List<Long> roleIds = urs.stream().map(e -> e.getRoleId()).collect(Collectors.toList());
+            // 获取用户菜单
+            List<SysRoleMenuEntity> rms = sysRoleMenuService.list(Wrappers.<SysRoleMenuEntity>lambdaQuery()
+                    .in(SysRoleMenuEntity::getRoleId, roleIds));
+            if (rms.isEmpty()) {
+                return pms;
+            }
+            List<Long> menuIds = rms.stream().map(e -> e.getMenuId()).distinct().collect(Collectors.toList());
+            // 获取用户父菜单
+            pms = ms.stream().filter(e -> Objects.equals(0L, e.getPid()) && menuIds.contains(e.getId()))
+                    .collect(Collectors.toList());
+            // 获取用户子菜单
+            ms = ms.stream().filter(e -> menuIds.contains(e.getId())).collect(Collectors.toList());
         }
+        // 获取子菜单
+        for (SysMenuEntity pm : pms) {
+            pm.setChild(getMenu(pm, ms));
+        }
+        return pms;
+    }
 
-        //用户菜单列表
-        List<Long> menuIdList = sysUserService.queryAllMenuId(userId);
-        return getAllMenuList(menuIdList);
+    /**
+     * 递归获取菜单
+     *
+     * @param pm
+     * @param ms
+     * @return
+     */
+    private List<SysMenuEntity> getMenu(SysMenuEntity pm, List<SysMenuEntity> ms) {
+        List<SysMenuEntity> lms = ms.stream().filter(e -> e.getPid().equals(pm.getId())).collect(Collectors.toList());
+        if (lms.isEmpty()) {
+            return new ArrayList<>();
+        }
+        for (SysMenuEntity lm : lms) {
+            lm.setChild(getMenu(lm, ms));
+        }
+        return lms;
     }
 
     @Override
@@ -66,32 +98,4 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuDao, SysMenuEntity> i
                 .eq(SysRoleMenuEntity::getMenuId, menuId));
     }
 
-    /**
-     * 获取所有菜单列表
-     */
-    private List<SysMenuEntity> getAllMenuList(List<Long> menuIdList) {
-        //查询根菜单列表
-        List<SysMenuEntity> menuList = queryListParentId(0L, menuIdList);
-        //递归获取子菜单
-        getMenuTreeList(menuList, menuIdList);
-
-        return menuList;
-    }
-
-    /**
-     * 递归
-     */
-    private List<SysMenuEntity> getMenuTreeList(List<SysMenuEntity> menuList, List<Long> menuIdList) {
-        List<SysMenuEntity> subMenuList = new ArrayList<SysMenuEntity>();
-
-        for (SysMenuEntity entity : menuList) {
-            //目录
-            if (entity.getType() == Constant.MenuType.CATALOG.getValue()) {
-                entity.setList(getMenuTreeList(queryListParentId(entity.getId(), menuIdList), menuIdList));
-            }
-            subMenuList.add(entity);
-        }
-
-        return subMenuList;
-    }
 }

@@ -2,7 +2,7 @@ package com.mm.modules.sys.service;
 
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.mm.common.utils.PageUtil;
+import com.mm.common.util.PageUtil;
 import com.mm.modules.sys.entity.SysLogEntity;
 
 import java.util.Map;

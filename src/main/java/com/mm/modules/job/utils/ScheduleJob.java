@@ -1,7 +1,7 @@
 package com.mm.modules.job.utils;
 
 import cn.hutool.core.util.StrUtil;
-import com.mm.common.utils.SpringContextUtil;
+import cn.hutool.extra.spring.SpringUtil;
 import com.mm.modules.job.entity.ScheduleJobEntity;
 import com.mm.modules.job.entity.ScheduleJobLogEntity;
 import com.mm.modules.job.service.ScheduleJobLogService;
@@ -28,7 +28,8 @@ public class ScheduleJob extends QuartzJobBean {
                 .get(ScheduleJobEntity.JOB_PARAM_KEY);
 
         //获取spring bean
-        ScheduleJobLogService scheduleJobLogService = (ScheduleJobLogService) SpringContextUtil.getBean("scheduleJobLogService");
+        ScheduleJobLogService scheduleJobLogService
+                = SpringUtil.getBean("scheduleJobLogService", ScheduleJobLogService.class);
 
         //数据库保存执行记录
         ScheduleJobLogEntity jobLog = new ScheduleJobLogEntity();
@@ -44,7 +45,7 @@ public class ScheduleJob extends QuartzJobBean {
             //执行任务
             log.debug("任务准备执行，任务ID：{}", scheduleJob.getId());
 
-            Object target = SpringContextUtil.getBean(scheduleJob.getBeanName());
+            Object target = SpringUtil.getBean(scheduleJob.getBeanName());
             Method method = target.getClass().getDeclaredMethod("run", String.class);
             method.invoke(target, scheduleJob.getParams());
 
