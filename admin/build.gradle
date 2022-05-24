@@ -1,0 +1,7 @@
+dependencies {
+    api project(path: ':service')
+}
+
+bootJar {
+    archiveFileName = 'cms-admin.jar'
+}
