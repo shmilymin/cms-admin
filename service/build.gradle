@@ -1,3 +1,5 @@
 dependencies {
-    api project(path: ':common')
+    implementation(
+            project(':common')
+    )
 }

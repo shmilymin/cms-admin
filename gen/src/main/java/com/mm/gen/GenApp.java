@@ -11,8 +11,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 @SpringBootApplication
 @EnableSpringUtil
-public class GeneratorApp {
+public class GenApp {
     public static void main(String[] args) {
-        SpringApplication.run(GeneratorApp.class, args);
+        SpringApplication.run(GenApp.class, args);
     }
 }

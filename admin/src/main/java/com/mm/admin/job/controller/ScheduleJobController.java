@@ -5,8 +5,8 @@ import com.mm.common.util.PageUtil;
 import com.mm.common.util.R;
 import com.mm.service.job.entity.ScheduleJobEntity;
 import com.mm.service.job.service.ScheduleJobService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,12 +23,13 @@ import java.util.Map;
  * @author lwl
  */
 @Slf4j
+@RequiredArgsConstructor
 @Validated
 @RestController
 @RequestMapping("/sys/schedule")
 public class ScheduleJobController {
-    @Autowired
-    private ScheduleJobService scheduleJobService;
+
+    final ScheduleJobService scheduleJobService;
 
     /**
      * 定时任务列表

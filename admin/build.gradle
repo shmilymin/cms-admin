@@ -1,5 +1,8 @@
 dependencies {
-    api project(path: ':service')
+    implementation(
+            project(':common'),
+            project(':service')
+    )
 }
 
 bootJar {
