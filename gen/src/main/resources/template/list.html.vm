@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <title>${comments}</title>
+    <th:block th:replace="header::common"/>
+</head>
+<body>
+<div>
+    <table class="layui-hide" id="tm" lay-filter="tm"></table>
+</div>
+
+<!-- 新增or修改 -->
+<div id="saveOrUpdate" style="display: none;padding: 50px">
+    <div class="layui-form" lay-filter="opt-form">
+        <input type="hidden" name="id"/>
+#foreach($column in $columns)
+#if($column.columnName != $pk.columnName && !(${column.attrname} == "createTime" || ${column.attrname} == "updateTime"))
+		<div class="layui-form-item">
+            <label class="layui-form-label">${column.comments}</label>
+            <div class="layui-input-inline">
+                <input type="text" name="${column.attrname}" placeholder="${column.comments}" lay-verify="required" class="layui-input">
+            </div>
+        </div>
+#end
+#end
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="submit">立即提交</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/html" id="toolbar">
+    <div class="layui-btn-container">
+        <span sec:authorize="hasAuthority('${moduleName}:${pathName}:save')">
+            <button class="layui-btn layui-btn-sm" lay-event="add">新增</button>
+        </span>
+        <span sec:authorize="hasAuthority('${moduleName}:${pathName}:update')">
+            <button class="layui-btn layui-btn-sm" lay-event="edit">修改</button>
+        </span>
+        <span sec:authorize="hasAuthority('${moduleName}:${pathName}:delete')">
+            <button class="layui-btn layui-btn-danger layui-btn-sm" lay-event="del">删除</button>
+        </span>
+    </div>
+</script>
+
+<script th:inline="none">
+    layui.use(['table', 'form'], function () {
+        var table = layui.table,
+            form = layui.form;
+        table.render({
+            elem: '#tm'
+            , url: '../../${moduleName}/${pathName}/list'
+            , page: true
+            , toolbar: '#toolbar' //开启头部工具栏，并为其绑定左侧模板
+            , defaultToolbar: []
+            , cols: [[
+                {type: 'checkbox', fixed: 'left'}
+#foreach($column in $columns)
+                , {field: '${column.attrname}', title: '${column.comments}'}
+#end
+            ]]
+        });
+
+        //头工具栏事件
+        table.on('toolbar(tm)', function (obj) {
+            var checkStatus = table.checkStatus(obj.config.id);
+            var data = checkStatus.data;
+            switch (obj.event) {
+                case 'add':
+                    openLayer("新增", 'saveOrUpdate');
+                    form.val("opt-form", {
+#foreach($column in $columns)
+#if(!(${column.attrname} == "createTime" || ${column.attrname} == "updateTime"))
+                        "${column.attrname}": null,
+#end
+#end
+                    });
+                    break;
+                case 'edit':
+                    if (checkSelectRow(data.length)) {
+                        return;
+                    }
+                    openLayer("修改", 'saveOrUpdate');
+                    form.val("opt-form", data[0]);
+                    break;
+                case 'del':
+                    var ids = checkSelectRows(data);
+                    if (ids.length == 0) {
+                        return;
+                    }
+                    layer.confirm('真的删除么', function (index) {
+                        $.ajax({
+                            type: "post",
+                            url: "../../${moduleName}/${pathName}/delete",
+                            contentType: "application/json",
+                            data: JSON.stringify(ids),
+                            async: false,
+                            success: function (r) {
+                                if (r.code == 0) {
+                                    layer.msg('删除成功', {icon: 6})
+                                    table.reload('tm');
+                                } else {
+                                    layer.msg(r.msg, {icon: 5})
+                                }
+                            }
+                        })
+                        layer.close(index);
+                    });
+                    break;
+            }
+        });
+
+        // 保存修改
+        form.on('submit(submit)', function (data) {
+            var val = data.field;
+            $.ajax({
+                type: "post",
+                url: "../../${moduleName}/${pathName}/save_or_update",
+                contentType: "application/json",
+                data: JSON.stringify(val),
+                async: false,
+                success: function (r) {
+                    if (r.code == 0) {
+                        layer.msg('保存成功', {icon: 6})
+                        table.reload('tm');
+                        layer.close(showIdx);
+                    } else {
+                        layer.msg(r.msg, {icon: 5})
+                    }
+                }
+            })
+            return false;
+        });
+
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+spring:
+  datasource:
+    hikari:
+      jdbc-url: jdbc:mysql://47.106.99.84:3306/greatpower_test?useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT%2B8&useSSL=false
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      username: greatpower
+      password: greatpower@root
+
+logging:
+  level:
+    com.mm: debug
