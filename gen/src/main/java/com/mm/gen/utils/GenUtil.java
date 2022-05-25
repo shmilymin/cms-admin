@@ -1,7 +1,9 @@
 package com.mm.gen.utils;
 
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.io.IoUtil;
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.io.resource.ResourceUtil;
+import cn.hutool.core.util.CharUtil;
 import cn.hutool.setting.dialect.Props;
 import com.mm.gen.entity.ColumnEntity;
 import com.mm.gen.entity.TableEntity;
@@ -12,11 +14,10 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.StringWriter;
+import java.net.URL;
 import java.util.*;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
+import java.util.stream.Collectors;
 
 /**
  * 代码生成器工具类
@@ -25,23 +26,32 @@ import java.util.zip.ZipOutputStream;
  */
 public class GenUtil {
 
+    /**
+     * 模版文件夹
+     */
+    public static final String TEMPLATE_PATH = "template";
+
+    /**
+     * 获取全部模版文件
+     *
+     * @return
+     */
     public static List<String> getTemplates() {
-        List<String> templates = new ArrayList<>();
-        templates.add("template/Entity.java.vm");
-        templates.add("template/Dao.java.vm");
-        templates.add("template/Dao.xml.vm");
-        templates.add("template/Service.java.vm");
-        templates.add("template/ServiceImpl.java.vm");
-        templates.add("template/Controller.java.vm");
-        templates.add("template/list.html.vm");
-        templates.add("template/menu.sql.vm");
-        return templates;
+        URL resource = ResourceUtil.getResource(TEMPLATE_PATH);
+        List<File> files = FileUtil.loopFiles(resource.getPath());
+        if (files.isEmpty()) {
+            throw new RuntimeException("==========没有模版文件==========");
+        }
+        List<String> ts = files.stream()
+                .map(e -> TEMPLATE_PATH + CharUtil.SLASH + e.getName())
+                .collect(Collectors.toList());
+        return ts;
     }
 
     /**
      * 生成代码
      */
-    public static void generatorCode(Map<String, String> table, List<Map<String, String>> columns, ZipOutputStream zip,
+    public static void generatorCode(Map<String, String> table, List<Map<String, String>> columns,
                                      String mainPath, String packageName, String moduleName, String author) {
         //配置信息
         Props props = new Props("generator.properties");
@@ -122,13 +132,12 @@ public class GenUtil {
             Template tpl = Velocity.getTemplate(template, "UTF-8");
             tpl.merge(context, sw);
 
+            String filePath = getFileName(template, tableEntity.getTableName(),
+                    tableEntity.getClassName(), packageName, moduleName);
+
             try {
-                //添加到zip
-                zip.putNextEntry(new ZipEntry(getFileName(template, tableEntity.getTableName(),
-                        tableEntity.getClassName(), packageName, moduleName)));
-                IoUtil.write(zip, false, sw.toString().getBytes());
-                zip.closeEntry();
-            } catch (IOException e) {
+                FileUtil.writeBytes(sw.toString().getBytes(), filePath);
+            } catch (Exception e) {
                 throw new RuntimeException("渲染模板失败，表名：" + tableEntity.getTableName(), e);
             }
         }

@@ -39,4 +39,20 @@ public class TableEntity {
      * 类名(第一个字母小写)，如：sys_user => sysUser
      */
     private String classname;
+
+    public String getClassName() {
+        return className;
+    }
+
+    public void setClassName(String className) {
+        this.className = className;
+    }
+
+    public String getClassname() {
+        return classname;
+    }
+
+    public void setClassname(String classname) {
+        this.classname = classname;
+    }
 }
