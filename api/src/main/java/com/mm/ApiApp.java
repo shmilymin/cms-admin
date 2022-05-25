@@ -1,4 +1,4 @@
-package com.mm.api;
+package com.mm;
 
 import cn.hutool.extra.spring.EnableSpringUtil;
 import org.springframework.boot.SpringApplication;

@@ -1,4 +1,4 @@
-package com.mm.service.job.utils;
+package com.mm.service.job.util;
 
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.spring.SpringUtil;

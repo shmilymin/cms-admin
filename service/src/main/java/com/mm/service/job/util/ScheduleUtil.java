@@ -1,4 +1,4 @@
-package com.mm.service.job.utils;
+package com.mm.service.job.util;
 
 import com.mm.common.exception.GException;
 import com.mm.common.util.Constant;
@@ -10,7 +10,7 @@ import org.quartz.*;
  *
  * @author lwl
  */
-public class ScheduleUtils {
+public class ScheduleUtil {
     private final static String JOB_NAME = "TASK_";
 
     /**

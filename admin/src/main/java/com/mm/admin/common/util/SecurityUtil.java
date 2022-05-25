@@ -4,7 +4,6 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.mm.service.sys.entity.SysUserEntity;
 import com.mm.service.sys.service.SysUserService;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,7 +16,6 @@ import java.util.List;
  *
  * @author lwl
  */
-@Lazy
 @Component
 public class SecurityUtil {
 

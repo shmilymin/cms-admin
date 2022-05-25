@@ -14,7 +14,7 @@ import com.mm.service.sys.entity.SysUserEntity;
 import com.mm.service.sys.entity.SysUserRoleEntity;
 import com.mm.service.sys.service.SysUserRoleService;
 import com.mm.service.sys.service.SysUserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,16 +27,11 @@ import java.util.stream.Collectors;
  *
  * @author lwl
  */
-@Service("sysUserService")
+@Service
+@RequiredArgsConstructor
 public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> implements SysUserService {
 
-    @Autowired
-    private SysUserRoleService sysUserRoleService;
-
-    @Override
-    public List<Long> queryAllMenuId(Long userId) {
-        return baseMapper.queryAllMenuId(userId);
-    }
+    final SysUserRoleService sysUserRoleService;
 
     @Override
     public PageUtil queryPage(Map<String, Object> params) {
